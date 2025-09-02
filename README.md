@@ -65,7 +65,7 @@ Before you begin, ensure you have the following installed:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/expense-tracker-app.git
+git clone https://github.com/InduminiDeAlwis/expense-tracker-app.git
 cd expense-tracker-app
 ```
 
