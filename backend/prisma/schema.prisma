@@ -1,15 +1,50 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"         // change to "postgresql" when you’re ready
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  name         String
+  passwordHash String
+  currency     String    @default("USD")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  expenses     Expense[]
+  categories   Category[]
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String
+  icon      String?    // ex. "🍔"
+  color     String?    // ex. "#16a34a"
+  userId    Int?
+  user      User?      @relation(fields: [userId], references: [id])
+  parentId  Int?
+  parent    Category?  @relation("Subcategories", fields: [parentId], references: [id])
+  children  Category[] @relation("Subcategories")
+  expenses  Expense[]
+}
+
+model Expense {
+  id          Int       @id @default(autoincrement())
+  amount      Float
+  date        DateTime  @default(now())
+  description String?
+  receiptUrl  String?
+  isRecurring Boolean   @default(false)
+  userId      Int
+  categoryId  Int?
+
+  user     User     @relation(fields: [userId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
